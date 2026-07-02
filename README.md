@@ -1,26 +1,17 @@
-# BoatOS Premium UI
+# BoatOS v0.3
 
-Snyggare och mer sammanhängande BoatOS-prototyp för Raspberry Pi + 4" ILI9488 TFT + MPU6050.
+Modulär startversion av BoatOS för Raspberry Pi.
 
-## Ny design
-- Premium mörkt marint tema
-- Statusrad med tydligare layout
-- Artificiell horisont med lutningsskala
-- Mjuka paneler och kort
-- Dashboard, System, Navigation, Motor och Meny
-- Modulär kodbas
-
-## Kör
-
+## Starta
 ```bash
-cd ~/BoatOS
-source ~/mpu/bin/activate
-python boatos.py
+cd BoatOS_v03
+python3 boatos.py
 ```
 
-## Installera service
+## Struktur
+- `boatos/core` - databuss, config, logger
+- `boatos/services` - navigation, motor, el, systemstatus
+- `boatos/ui` - terminalbaserat dashboard just nu
+- `boatos/config/settings.json` - inställningar
 
-```bash
-chmod +x scripts/*.sh
-./scripts/install_service.sh
-```
+Denna version kör med mock-data så att allt fungerar utan sensorer.

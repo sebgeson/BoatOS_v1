@@ -1,4 +1,0 @@
-luma.lcd
-luma.core
-smbus2
-mpu6050-raspberrypi
