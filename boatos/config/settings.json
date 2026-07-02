@@ -1,9 +1,0 @@
-{
-  "boat_name": "HERWA23",
-  "refresh_rate": 1.0,
-  "theme": "classic",
-  "gps_enabled": false,
-  "battery_enabled": false,
-  "engine_enabled": false,
-  "opencpn_enabled": false
-}
