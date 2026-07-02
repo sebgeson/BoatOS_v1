@@ -1,34 +1,25 @@
-# BoatOS v1.0
+# BoatOS Dual Display
 
-Modern Pygame-baserad BoatOS för Raspberry Pi.
+HDMI-skärmen kör huvud-UI. 3,5" SPI-touchdisplayen används som kontrollpanel.
 
-## Installera
-
+## Start
 ```bash
-cd BoatOS_v1
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python boatos.py
+cd BoatOS_DualDisplay
+pip3 install -r requirements.txt
+python3 main.py
 ```
 
-Om du vill köra utan venv:
+## På Raspberry Pi
+- HDMI visar dashboard/navigation/motor/el/larm.
+- Kontrollpanelen kan köras på framebuffer om din SPI-skärm är installerad som egen display.
+- Justera displaynummer i `config.py` vid behov.
 
-```bash
-pip3 install pygame-ce psutil
-python3 boatos.py
-```
-
-## Tangenter / touch
-
-- Klicka på knapparna längst ner för sidor.
-- Piltangent vänster/höger byter sida.
-- ESC avslutar.
-
-## Sidor
-
-- Dashboard
-- Navigation
-- Motor
-- Elsystem
-- System
+## Tangenter för test på dator/Pi
+- 1 Dashboard
+- 2 Navigation
+- 3 Motor
+- 4 El
+- 5 Larm
+- N Nattläge
+- D Dim
+- ESC Avsluta

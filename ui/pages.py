@@ -1,75 +1,59 @@
 import pygame
-from core.theme import THEME
-from ui.widgets.base import ValueWidget
+from ui.widgets import card, text, topbar
 
-class Page:
-    name = "PAGE"
-    def __init__(self, w, h):
-        self.w = w
-        self.h = h
-        self.widgets = []
+PAGES = ["dashboard", "navigation", "motor", "el", "larm"]
+PAGE_TITLES = {
+    "dashboard": "Dashboard",
+    "navigation": "Navigation",
+    "motor": "Motor",
+    "el": "Elsystem",
+    "larm": "Larmcentral",
+}
 
-    def draw_title(self, surf, title):
-        font = pygame.font.SysFont("DejaVu Sans", 22, bold=True)
-        surf.blit(font.render(title, True, THEME["line"]), (22, 76))
 
-    def draw(self, surf, bus):
-        self.draw_title(surf, self.name)
-        for widget in self.widgets:
-            widget.draw(surf, bus)
+def draw_page(surface, bus, theme, fonts):
+    w, h = surface.get_size()
+    surface.fill(theme.bg)
+    topbar(surface, bus, theme, fonts, w)
+    page = bus.page
+    text(surface, fonts.title, PAGE_TITLES.get(page, page), (28, 86), theme.text)
 
-class DashboardPage(Page):
-    name = "DASHBOARD"
-    def __init__(self, w, h):
-        super().__init__(w, h)
-        self.widgets = [
-            ValueWidget((20, 110, 210, 120), "FART", "speed_kn", "kn", True),
-            ValueWidget((250, 110, 210, 120), "KURS", "heading_deg", "°", True),
-            ValueWidget((20, 250, 210, 105), "DJUP", "depth_m", "m"),
-            ValueWidget((250, 250, 210, 105), "MOTOR", "engine_temp", "°C"),
-            ValueWidget((20, 375, 210, 105), "BATTERI", "battery_v", "V"),
-            ValueWidget((250, 375, 210, 105), "WIFI", "wifi", ""),
-        ]
+    if page == "dashboard":
+        text(surface, fonts.huge, f"{bus.data['speed_kn']:.1f}", (w//2, 180), theme.text, center=True)
+        text(surface, fonts.title, "knop", (w//2, 245), theme.muted, center=True)
+        card(surface, (35, 330, 215, 150), "Kurs", f"{bus.data['heading']}°", "", theme, fonts)
+        card(surface, (275, 330, 215, 150), "Djup", f"{bus.data['depth_m']:.1f}", "m", theme, fonts)
+        card(surface, (515, 330, 215, 150), "Motor", f"{bus.data['engine_temp']}°", "C", theme, fonts)
+        card(surface, (755, 330, 215, 150), "Batteri", f"{bus.data['battery_v']}", "V", theme, fonts)
+    elif page == "navigation":
+        card(surface, (35, 140, 290, 150), "Fart", f"{bus.data['speed_kn']:.1f}", "kn", theme, fonts)
+        card(surface, (365, 140, 290, 150), "Kurs", f"{bus.data['heading']}°", "", theme, fonts)
+        card(surface, (695, 140, 290, 150), "GPS", bus.data['gps'], "", theme, fonts)
+        card(surface, (35, 330, 455, 150), "Position", "INGEN FIX", "", theme, fonts)
+        card(surface, (530, 330, 455, 150), "OpenCPN", bus.data['opencpn'], "", theme, fonts)
+    elif page == "motor":
+        card(surface, (35, 140, 290, 150), "Motortemp", f"{bus.data['engine_temp']}", "°C", theme, fonts)
+        card(surface, (365, 140, 290, 150), "Varvtal", "----", "rpm", theme, fonts)
+        card(surface, (695, 140, 290, 150), "Laddning", f"{bus.data['battery_v']}", "V", theme, fonts)
+        card(surface, (35, 330, 455, 150), "Oljetryck", "OK", "", theme, fonts)
+        card(surface, (530, 330, 455, 150), "Drifttid", f"{bus.data['runtime_h']}", "h", theme, fonts)
+    elif page == "el":
+        card(surface, (35, 140, 290, 150), "Startbatteri", f"{bus.data['battery_v']}", "V", theme, fonts)
+        card(surface, (365, 140, 290, 150), "Förbrukning", "12.4", "V", theme, fonts)
+        card(surface, (695, 140, 290, 150), "Generator", "VÄNTAR", "", theme, fonts)
+        card(surface, (35, 330, 455, 150), "Landström", "AV", "", theme, fonts)
+        card(surface, (530, 330, 455, 150), "Total ström", "--", "A", theme, fonts)
+    elif page == "larm":
+        alerts = ["Ingen GPS-fix", "OpenCPN ej ansluten", "Motortemp OK", "Batterispänning OK"]
+        y = 145
+        for a in alerts:
+            color = theme.warn if "Ingen" in a or "ej" in a else theme.good
+            pygame.draw.rect(surface, theme.card, (55, y, w-110, 70), border_radius=14)
+            pygame.draw.circle(surface, color, (85, y+35), 11)
+            text(surface, fonts.normal, a, (115, y+22), theme.text)
+            y += 88
 
-class NavigationPage(Page):
-    name = "NAVIGATION"
-    def __init__(self, w, h):
-        super().__init__(w, h)
-        self.widgets = [
-            ValueWidget((20, 115, 440, 90), "GPS", "gps_status"),
-            ValueWidget((20, 220, 210, 95), "FART", "speed_kn", "kn"),
-            ValueWidget((250, 220, 210, 95), "KURS", "heading_deg", "°"),
-            ValueWidget((20, 335, 440, 95), "OPENCPN", "opencpn"),
-        ]
-
-class EnginePage(Page):
-    name = "MOTOR"
-    def __init__(self, w, h):
-        super().__init__(w, h)
-        self.widgets = [
-            ValueWidget((20, 115, 210, 100), "TEMP", "engine_temp", "°C"),
-            ValueWidget((250, 115, 210, 100), "VARVTAL", "rpm", "rpm"),
-            ValueWidget((20, 235, 210, 100), "LADDNING", "battery_v", "V"),
-            ValueWidget((250, 235, 210, 100), "OLJETRYCK", "oil", "OK"),
-        ]
-
-class ElectricalPage(Page):
-    name = "ELSYSTEM"
-    def __init__(self, w, h):
-        super().__init__(w, h)
-        self.widgets = [
-            ValueWidget((20, 115, 210, 100), "STARTBATTERI", "battery_v", "V"),
-            ValueWidget((250, 115, 210, 100), "FÖRBRUKNING", "house_v", "V"),
-            ValueWidget((20, 235, 210, 100), "GENERATOR", "charge", ""),
-            ValueWidget((250, 235, 210, 100), "STRÖM", "amps", "A"),
-        ]
-
-class SystemPage(Page):
-    name = "SYSTEM"
-    def __init__(self, w, h):
-        super().__init__(w, h)
-        self.widgets = [
-            ValueWidget((20, 115, 210, 100), "CPU", "cpu_temp", "°C"),
-            ValueWidget((250, 115, 210, 100), "WIFI", "wifi"),
-            ValueWidget((20, 235, 440, 100), "OPENCPN", "opencpn"),
-        ]
+    if bus.dimmed:
+        overlay = pygame.Surface((w,h), pygame.SRCALPHA)
+        overlay.fill(theme.dim_overlay)
+        surface.blit(overlay, (0,0))
