@@ -1,37 +1,16 @@
-# BoatOS Full Prototype
+# BoatOS Premium UI
 
-En komplett, körbar BoatOS-prototyp för Raspberry Pi + ILI9488 SPI TFT + MPU6050.
+Snyggare och mer sammanhängande BoatOS-prototyp för Raspberry Pi + 4" ILI9488 TFT + MPU6050.
 
-## Innehåll
-- Dashboard med konstgjord horisont
-- Systemskärm
-- Menyskärm
-- Navigation placeholder
-- Motorsida placeholder
-- App-motor med skärmhantering
-- Sensorsystem för IMU, batteri och systemdata
-- Widget-system
-- Dag/natt-tema
-- Loggning
-- Autostart via systemd
+## Ny design
+- Premium mörkt marint tema
+- Statusrad med tydligare layout
+- Artificiell horisont med lutningsskala
+- Mjuka paneler och kort
+- Dashboard, System, Navigation, Motor och Meny
+- Modulär kodbas
 
-## Installera på Pi
-
-Kopiera mappen till:
-
-```bash
-/home/sgson/BoatOS
-```
-
-Kör:
-
-```bash
-cd ~/BoatOS
-chmod +x scripts/*.sh
-./scripts/install_deps.sh
-```
-
-Starta manuellt:
+## Kör
 
 ```bash
 cd ~/BoatOS
@@ -39,14 +18,9 @@ source ~/mpu/bin/activate
 python boatos.py
 ```
 
-Autostart:
+## Installera service
 
 ```bash
+chmod +x scripts/*.sh
 ./scripts/install_service.sh
-```
-
-Stoppa service för test:
-
-```bash
-sudo systemctl stop boatos.service
 ```

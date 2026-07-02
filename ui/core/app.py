@@ -14,6 +14,4 @@ class App:
             self.active_screen = name
 
     def render(self, data):
-        if self.active_screen is None:
-            return None
         return self.screens[self.active_screen].render(self.device, data)

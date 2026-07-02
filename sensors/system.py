@@ -18,7 +18,6 @@ class SystemSensor:
     def read(self):
         self.frames += 1
         now = time.time()
-
         if now - self.last_time >= 1:
             self.fps = self.frames
             self.frames = 0

@@ -11,8 +11,8 @@ from sensors.system import SystemSensor
 from sensors.gps import GPS
 from sensors.engine import Engine
 from screens.startup import draw_startup
-from screens.dashboard_v2 import DashboardV2
-from screens.system_v2 import SystemV2
+from screens.dashboard import Dashboard
+from screens.system_screen import SystemScreen
 from screens.menu import MenuScreen
 from screens.navigation import NavigationScreen
 from screens.engine_screen import EngineScreen
@@ -20,29 +20,10 @@ from ui.core.app import App
 
 
 Path("/home/sgson/BoatOS/logs").mkdir(parents=True, exist_ok=True)
+logging.basicConfig(filename=LOG_PATH, level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-logging.basicConfig(
-    filename=LOG_PATH,
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s"
-)
-
-logging.info("BoatOS startar")
-
-serial = spi(
-    port=SPI_PORT,
-    device=SPI_DEVICE,
-    gpio_DC=GPIO_DC,
-    gpio_RST=GPIO_RST,
-    bus_speed_hz=SPI_SPEED
-)
-
-device = ili9488(
-    serial,
-    width=DISPLAY_WIDTH,
-    height=DISPLAY_HEIGHT,
-    rotate=DISPLAY_ROTATE
-)
+serial = spi(port=SPI_PORT, device=SPI_DEVICE, gpio_DC=GPIO_DC, gpio_RST=GPIO_RST, bus_speed_hz=SPI_SPEED)
+device = ili9488(serial, width=DISPLAY_WIDTH, height=DISPLAY_HEIGHT, rotate=DISPLAY_ROTATE)
 
 draw_startup(device)
 
@@ -53,8 +34,8 @@ gps = GPS()
 engine = Engine()
 
 app = App(device)
-app.add_screen("dashboard", DashboardV2())
-app.add_screen("system", SystemV2())
+app.add_screen("dashboard", Dashboard())
+app.add_screen("system", SystemScreen())
 app.add_screen("menu", MenuScreen())
 app.add_screen("navigation", NavigationScreen())
 app.add_screen("engine", EngineScreen())
@@ -63,34 +44,22 @@ screen_names = ["dashboard", "system", "menu", "navigation", "engine"]
 
 while True:
     try:
-        imu_data = imu.read()
-        battery_data = battery.read()
-        system_data = system.read()
-        gps_data = gps.read()
-        engine_data = engine.read()
-
         data = {
-            **imu_data,
-            "battery": battery_data,
-            "system": system_data,
-            "gps": gps_data,
-            "engine": engine_data
+            **imu.read(),
+            "battery": battery.read(),
+            "system": system.read(),
+            "gps": gps.read(),
+            "engine": engine.read()
         }
 
         screen_index = int(time.time() / SCREEN_SWITCH_SECONDS) % len(screen_names)
         app.set_screen(screen_names[screen_index])
 
-        img = app.render(data)
-
-        if img:
-            device.display(img)
-
+        device.display(app.render(data))
         time.sleep(0.03)
 
     except KeyboardInterrupt:
-        logging.info("BoatOS stoppat med Ctrl+C")
         break
-
     except Exception:
         logging.exception("Fel i huvudloopen")
         time.sleep(1)

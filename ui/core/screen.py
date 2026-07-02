@@ -8,5 +8,5 @@ class Screen:
 
     def draw_widgets(self, draw, data):
         for widget in self.widgets:
-            if widget.visible:
+            if getattr(widget, "visible", True):
                 widget.draw(draw, data)
