@@ -12,6 +12,7 @@ from screens.startup import draw_startup
 from screens.dashboard_v2 import DashboardV2
 from screens.system_v2 import SystemV2
 from ui.core.app import App
+from screens.menu import MenuScreen
 
 
 LOG_DIR = Path("/home/sgson/BoatOS/logs")
@@ -47,6 +48,7 @@ system = SystemSensor()
 app = App(device)
 app.add_screen("dashboard", DashboardV2())
 app.add_screen("system", SystemV2())
+app.add_screen("menu", MenuScreen())
 
 while True:
     try:
@@ -59,11 +61,14 @@ while True:
             "battery": battery_data,
             "system": system_data
         }
+        screen_cycle = int(time.time() / SCREEN_SWITCH_SECONDS) % 3
 
-        if int(time.time() / SCREEN_SWITCH_SECONDS) % 2 == 0:
+        if screen_cycle == 0:
             app.set_screen("dashboard")
-        else:
+        elif screen_cycle == 1:
             app.set_screen("system")
+        else:
+            app.set_screen("menu")
 
         img = app.render(data)
 
