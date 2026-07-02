@@ -22,7 +22,7 @@ def draw(draw, width, height, roll, pitch):
     draw.polygon([(0, 230), (width, 230), (x2, y2), (x1, y1)], fill=theme.SEA)
     draw.line((x1, y1, x2, y2), fill=theme.WHITE, width=4)
 
-    # Fast båtmarkör
+    # Båtmarkör
     draw.line((cx - 60, cy, cx - 15, cy), fill=theme.YELLOW, width=5)
     draw.line((cx + 15, cy, cx + 60, cy), fill=theme.YELLOW, width=5)
     draw.polygon(
@@ -30,7 +30,7 @@ def draw(draw, width, height, roll, pitch):
         fill=theme.YELLOW
     )
 
-    # Enkel pitchskala
+    # Pitchskala
     for value in range(-20, 21, 10):
         y = cy + value * 3
         draw.line((cx - 25, y, cx + 25, y), fill=theme.WHITE, width=1)

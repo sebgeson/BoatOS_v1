@@ -8,21 +8,26 @@ from config import *
 from sensors.imu import IMU
 from sensors.battery import Battery
 from sensors.system import SystemSensor
+from sensors.gps import GPS
+from sensors.engine import Engine
 from screens.startup import draw_startup
 from screens.dashboard_v2 import DashboardV2
 from screens.system_v2 import SystemV2
-from ui.core.app import App
 from screens.menu import MenuScreen
+from screens.navigation import NavigationScreen
+from screens.engine_screen import EngineScreen
+from ui.core.app import App
 
 
-LOG_DIR = Path("/home/sgson/BoatOS/logs")
-LOG_DIR.mkdir(parents=True, exist_ok=True)
+Path("/home/sgson/BoatOS/logs").mkdir(parents=True, exist_ok=True)
 
 logging.basicConfig(
-    filename=str(LOG_DIR / "boatos.log"),
+    filename=LOG_PATH,
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s"
 )
+
+logging.info("BoatOS startar")
 
 serial = spi(
     port=SPI_PORT,
@@ -44,31 +49,36 @@ draw_startup(device)
 imu = IMU(address=IMU_ADDRESS, alpha=IMU_SMOOTHING)
 battery = Battery()
 system = SystemSensor()
+gps = GPS()
+engine = Engine()
 
 app = App(device)
 app.add_screen("dashboard", DashboardV2())
 app.add_screen("system", SystemV2())
 app.add_screen("menu", MenuScreen())
+app.add_screen("navigation", NavigationScreen())
+app.add_screen("engine", EngineScreen())
+
+screen_names = ["dashboard", "system", "menu", "navigation", "engine"]
 
 while True:
     try:
         imu_data = imu.read()
         battery_data = battery.read()
         system_data = system.read()
+        gps_data = gps.read()
+        engine_data = engine.read()
 
         data = {
             **imu_data,
             "battery": battery_data,
-            "system": system_data
+            "system": system_data,
+            "gps": gps_data,
+            "engine": engine_data
         }
-        screen_cycle = int(time.time() / SCREEN_SWITCH_SECONDS) % 3
 
-        if screen_cycle == 0:
-            app.set_screen("dashboard")
-        elif screen_cycle == 1:
-            app.set_screen("system")
-        else:
-            app.set_screen("menu")
+        screen_index = int(time.time() / SCREEN_SWITCH_SECONDS) % len(screen_names)
+        app.set_screen(screen_names[screen_index])
 
         img = app.render(data)
 
@@ -78,6 +88,7 @@ while True:
         time.sleep(0.03)
 
     except KeyboardInterrupt:
+        logging.info("BoatOS stoppat med Ctrl+C")
         break
 
     except Exception:

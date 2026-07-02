@@ -1,6 +1,5 @@
 from PIL import Image, ImageDraw
 import time
-
 from themes import current as theme
 from config import BOAT_NAME
 

@@ -24,10 +24,8 @@ class SystemSensor:
             self.frames = 0
             self.last_time = now
 
-        uptime = int(now - self.start_time)
-
         return {
             "cpu_temp": self.read_cpu_temp(),
             "fps": self.fps,
-            "uptime": uptime
+            "uptime": int(now - self.start_time)
         }

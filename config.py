@@ -15,4 +15,6 @@ IMU_SMOOTHING = 0.10
 BOAT_NAME = "HERWA 23"
 THEME = "dark"
 
-SCREEN_SWITCH_SECONDS = 10
+SCREEN_SWITCH_SECONDS = 8
+
+LOG_PATH = "/home/sgson/BoatOS/logs/boatos.log"

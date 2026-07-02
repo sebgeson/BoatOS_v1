@@ -1,24 +1,37 @@
-# BoatOS v1.0 Prototype
+# BoatOS Full Prototype
 
-BoatOS är en marin instrumentpanel för Raspberry Pi med 4.0" SPI TFT-display och MPU6050.
+En komplett, körbar BoatOS-prototyp för Raspberry Pi + ILI9488 SPI TFT + MPU6050.
 
-## Funktioner
-- Startskärm
-- Konstgjord horisont
-- Krängning / roll
-- Stampning / pitch
-- Batteriruta med simulerat värde
-- CPU-temp och FPS
-- Dashboard och systemskärm
-- Modulär struktur med widgets, screens, sensors och themes
-- Systemd-autostart
+## Innehåll
+- Dashboard med konstgjord horisont
+- Systemskärm
+- Menyskärm
+- Navigation placeholder
+- Motorsida placeholder
+- App-motor med skärmhantering
+- Sensorsystem för IMU, batteri och systemdata
+- Widget-system
+- Dag/natt-tema
+- Loggning
+- Autostart via systemd
 
-## Testad hårdvara
-- Raspberry Pi Zero W / Zero 2 W
-- 4.0" SPI TFT 480x320, ILI9488
-- MPU6050 via I2C adress 0x68
+## Installera på Pi
 
-## Starta manuellt
+Kopiera mappen till:
+
+```bash
+/home/sgson/BoatOS
+```
+
+Kör:
+
+```bash
+cd ~/BoatOS
+chmod +x scripts/*.sh
+./scripts/install_deps.sh
+```
+
+Starta manuellt:
 
 ```bash
 cd ~/BoatOS
@@ -26,21 +39,14 @@ source ~/mpu/bin/activate
 python boatos.py
 ```
 
-## Installera autostart
+Autostart:
 
 ```bash
-chmod +x scripts/install_service.sh
 ./scripts/install_service.sh
 ```
 
-## Stoppa service vid manuell testning
+Stoppa service för test:
 
 ```bash
 sudo systemctl stop boatos.service
-```
-
-## Starta service
-
-```bash
-sudo systemctl restart boatos.service
 ```

@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-SERVICE_FILE=/etc/systemd/system/boatos.service
+chmod +x /home/sgson/BoatOS/scripts/start_boatos.sh
 
-sudo tee "$SERVICE_FILE" > /dev/null <<'EOF'
+sudo tee /etc/systemd/system/boatos.service > /dev/null <<'EOF'
 [Unit]
 Description=BoatOS Marine Dashboard
 After=network.target
@@ -19,9 +19,8 @@ RestartSec=3
 WantedBy=multi-user.target
 EOF
 
-chmod +x /home/sgson/BoatOS/scripts/start_boatos.sh
 sudo systemctl daemon-reload
 sudo systemctl enable boatos.service
 sudo systemctl restart boatos.service
 
-echo "BoatOS service installerad och startad."
+echo "BoatOS service installerad."

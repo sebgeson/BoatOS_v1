@@ -1,4 +1,4 @@
-# Koppling
+# BoatOS koppling
 
 ## TFT SPI-display
 

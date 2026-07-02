@@ -11,12 +11,10 @@ class InfoBox(Widget):
 
     def draw(self, draw, data):
         value = self.value_func(data)
-
         draw.rectangle(
             (self.x, self.y, self.x + self.width, self.y + self.height),
             outline=theme.WHITE,
             width=2
         )
-
         draw.text((self.x + 10, self.y + 8), self.title, fill=theme.WHITE)
         draw.text((self.x + 10, self.y + 34), value, fill=self.color)
