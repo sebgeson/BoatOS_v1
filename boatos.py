@@ -10,7 +10,8 @@ from sensors.battery import Battery
 from sensors.system import SystemSensor
 from screens.startup import draw_startup
 from screens.dashboard_v2 import DashboardV2
-from screens.system_screen import draw_system_screen
+from screens.system_v2 import SystemV2
+from ui.core.app import App
 
 
 LOG_DIR = Path("/home/sgson/BoatOS/logs")
@@ -21,8 +22,6 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s"
 )
-
-logging.info("BoatOS startar")
 
 serial = spi(
     port=SPI_PORT,
@@ -44,7 +43,10 @@ draw_startup(device)
 imu = IMU(address=IMU_ADDRESS, alpha=IMU_SMOOTHING)
 battery = Battery()
 system = SystemSensor()
-dashboard = DashboardV2()
+
+app = App(device)
+app.add_screen("dashboard", DashboardV2())
+app.add_screen("system", SystemV2())
 
 while True:
     try:
@@ -58,17 +60,19 @@ while True:
             "system": system_data
         }
 
-        # Växla automatiskt mellan dashboard och systemskärm
         if int(time.time() / SCREEN_SWITCH_SECONDS) % 2 == 0:
-            img = dashboard.render(device, data)
+            app.set_screen("dashboard")
         else:
-            img = draw_system_screen(device, data)
+            app.set_screen("system")
 
-        device.display(img)
+        img = app.render(data)
+
+        if img:
+            device.display(img)
+
         time.sleep(0.03)
 
     except KeyboardInterrupt:
-        logging.info("BoatOS stoppat med Ctrl+C")
         break
 
     except Exception:
